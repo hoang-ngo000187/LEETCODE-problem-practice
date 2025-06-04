@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include <string>
 #include<bits/stdc++.h>
-
+#include<stdint.h>
 using namespace std;
 
 class Solution {
@@ -1000,6 +1000,64 @@ public:
 
         return nums;
     }
+
+    /* 5. Longest Palindromic Substring */
+    string longestPalindrome(string s) {
+        string sLongestPalSubStr = "";
+        uint16_t n16LongestPalSubLen = 0, n16LenS = 0, n16LenTmp = 0;
+        int16_t n16L = 0, n16R = 0;
+        n16LenS = s.length();
+
+        for(int i = 0; i < n16LenS; i++)
+        {
+            /* Check for odd palindromic subtring */
+            n16L = i;
+            n16R = i;
+            while((n16L >= 0) && (n16R < n16LenS))
+            {
+                if (s[n16L] == s[n16R])
+                {
+                    n16LenTmp = n16R - n16L + 1;
+                    if (n16LenTmp > n16LongestPalSubLen)
+                    {
+                        n16LongestPalSubLen = n16LenTmp;
+                        sLongestPalSubStr = s.substr(n16L, n16R - n16L + 1);
+                    }
+                    n16L--;
+                    n16R++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            /* Check for even palindromic subtring */
+            n16L = i;
+            n16R = i+1;
+            while((n16L >= 0) && (n16R < n16LenS))
+            {
+                if (s[n16L] == s[n16R])
+                {
+                    n16LenTmp = n16R - n16L + 1;
+                    if (n16LenTmp > n16LongestPalSubLen)
+                    {
+                        n16LongestPalSubLen = n16LenTmp;
+                        sLongestPalSubStr = s.substr(n16L, n16R - n16L + 1);
+                    }
+                    n16L--;
+                    n16R++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+
+        return sLongestPalSubStr;
+    }
+    
 };
 
 
@@ -1014,10 +1072,7 @@ int main()
     vector<vector<char>> VECTOR_2D_RESULT;
     double DOUBLE_RESULT = 0;
 
-    vector<int> a = {2,1,3,5,6};
-    int k = 5, m = 2;
-
-    VECTOR_RESULT = S.getFinalState(a, k, m);
+    STR_RESULT = S.longestPalindrome("xaabacxcabaaxcabaax");
     //cout << VECTOR_RESULT;
     return 0;
 }
