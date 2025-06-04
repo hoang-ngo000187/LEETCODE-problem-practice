@@ -744,6 +744,262 @@ public:
         return ret;
     }
 
+    /* 2337. Move Pieces to Obtain a String */
+    bool ObstacleL_rightside(int idx1, int idx2, string x)
+    {
+        if (idx1 >= idx2)
+            return false;
+        
+        bool ret = false;
+        for(int i = idx1; i < idx2; i++)
+        {
+            if (x[i] == 'L')
+            {
+                ret = true;
+                break;
+            }
+        }
+        return ret;
+    }
+
+    bool canChange(string start, string target) {
+        bool valid = true, meet1 = false, meet2 = false;
+        int L1 = start.size(), L2 = target.size(), ptr1 = 0, ptr2 = 0, checked_idx = 0,cnt1 = 0, cnt2 = 0;
+        char char1 = 0, char2 = 0;
+
+        if(L1 != L2)
+        {
+            valid = false;
+        }
+        else
+        {
+            while(ptr1 < L1)
+            {
+                if (start[ptr1] == '_' && meet1 == false && (ptr1 < L1-1))
+                    ptr1++;
+                else
+                {
+                    char1 = start[ptr1];
+                    meet1 = true;
+                }
+
+                if (target[ptr2] == '_' && meet2 == false && (ptr2 < L2-1))
+                {
+                    if (ptr2 < L2)
+                        ptr2++;
+                }
+                else
+                {
+                    char2 = target[ptr2];
+                    meet2 = true;
+                }
+
+                if (meet1 == true && meet2 == true)
+                {
+                    meet1 = false;
+                    meet2 = false;
+
+                    /* 1. Check if char1 != char2 --> return FALSE */
+                    if (char1 != char2)
+                    {
+                        valid = false;
+                        break;
+                    }
+                    else
+                    {
+                        if (char1 == 'L')
+                        {
+                            if (ptr1 < ptr2)
+                            {
+                                valid = false;
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            if ( (ptr2 < ptr1) ||\
+                            (ptr2 >= ptr1) && (ObstacleL_rightside(ptr1+1, ptr2, start) == true) )
+                            {
+                                valid = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (ptr1 < L1-1)
+                        ptr1++;
+                    if (ptr2 < L2-1)
+                        ptr2++;
+
+                    if (ptr2 == L2-1)
+                    {
+                        if (cnt1 == cnt2)
+                        {
+                            valid = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return valid;
+    }
+
+    int maximumLength(string s) {
+        int L = s.length();
+        int ret = -1, tmp = 0;
+        char before = s[0];
+        string Stmp = "";
+        unordered_map <string, int> M;
+        vector<string> storage;
+
+        for(int i = 0; i < L; i++)
+        {
+            Stmp += s[i];
+            M[Stmp] += 1;
+            storage.push_back(Stmp);
+
+            if (M[Stmp] >= 3)
+            {
+                tmp = 1;
+
+                if(tmp > ret)
+                    ret = tmp;
+            }
+
+            for(int j = i+1; j < L; j++)
+            {
+                if (s[j] == s[j-1])
+                {
+                    Stmp += s[j];
+                    M[Stmp] += 1;
+                    storage.push_back(Stmp);
+                }
+                else
+                    break;
+                
+                if (M[Stmp] >= 3)
+                {
+                    tmp = 1;
+
+                    if(tmp > ret)
+                        ret = tmp;
+                }
+            }
+        }
+
+        for(string x: storage)
+        {
+            if(M[x] >= 3)
+            {
+                tmp = x.length();
+
+                if (tmp > ret)
+                    ret = tmp;
+            }
+        }
+
+        return ret;
+    }
+
+    /* 2558. Take Gifts From the Richest Pile */
+    int mySqrt(int x) 
+    {
+        if (x==0) return 0;
+        int left = 1;
+        int right = x/2 + 1;
+        int res;
+
+        while (left <= right) {
+            int mid = left + ((right-left)/2);
+            if (mid<=x/mid){
+                left = mid+1;
+                res=mid;
+            }
+            else {
+                right=mid-1;
+            }
+        }
+
+        return res;
+    }
+
+    long long pickGifts(vector<int>& gifts, int k) {
+        int L = gifts.size(), sqtr_val = 0, maxtmp = 0;
+        long long sumgifts = 0;
+        priority_queue<int> pq;
+
+        for(int i = 0; i < L; i++)
+        {
+            pq.push(gifts[i]);
+            sumgifts += gifts[i];
+        }
+
+        for(int i = 0; i < k; i++)
+        {
+            maxtmp = pq.top();
+            pq.pop();
+
+            sumgifts -= maxtmp;
+
+            sqtr_val = mySqrt(maxtmp);
+            pq.push(sqtr_val);
+
+            sumgifts += sqtr_val;
+        }
+
+        return sumgifts;
+    }
+    
+    double maxAverageRatio(vector<vector<int>>& classes, int extraStudents) {
+        double ratio = 0, tmp = 0, max_val = 0, sum = 0;
+        int L = classes.size(), idx = 0; 
+
+        for(int i = 0; i < L; i++)
+        {
+            tmp = (double)(classes[i][0] + extraStudents) / (classes[i][1] + extraStudents);
+            sum += (double)(classes[i][0]) / (classes[i][1]);
+
+            if (tmp > max_val && tmp < 1)
+            {
+                max_val = tmp;
+                idx = i;
+            }
+        }
+        
+        sum = sum - (double)(classes[idx][0]) / (classes[idx][1]) + max_val;
+
+        ratio = sum/L;
+
+        return ratio;
+    }
+
+    vector<int> getFinalState(vector<int>& nums, int k, int multiplier) {
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> PQ;
+
+        pair<int, int> pTmp;
+
+        for(int i = 0; i < nums.size(); i++)
+        {
+            PQ.push(make_pair(nums[i], i));
+        }
+
+        do
+        {
+            pTmp = PQ.top();
+            PQ.pop();
+
+            pTmp.first *= multiplier;
+
+            nums[pTmp.second] = pTmp.first;
+
+            PQ.push(pTmp);
+
+        }while(--k > 0);
+
+        return nums;
+    }
 };
 
 
@@ -752,14 +1008,16 @@ int main()
     Solution S;
     string STR_RESULT = "";
     int INT_RESULT = 0;
+    long long LL_RESULT = 0;
     bool BOOL_RESULT = false;
     vector<int> VECTOR_RESULT;
     vector<vector<char>> VECTOR_2D_RESULT;
+    double DOUBLE_RESULT = 0;
 
-    string a = "abc";
-    string b = "ad";
+    vector<int> a = {2,1,3,5,6};
+    int k = 5, m = 2;
 
-    BOOL_RESULT = S.canMakeSubsequence(a, b);
+    VECTOR_RESULT = S.getFinalState(a, k, m);
     //cout << VECTOR_RESULT;
     return 0;
 }
