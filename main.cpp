@@ -1187,8 +1187,56 @@ public:
         }
         return v_Ret;
     }
+    /*
+    testcase
+    nums = {2,-3,0,-2,-5,-5,-4,1,2,-2,2,0,2,-4,5,5,-10}; --> dễ bị trùng
+    nums = {-4,-2,1,-5,-4,-4,4,-2,0,4,0,-2,3,1,-5,0}; --> dễ thiếu case {0, 0, 0}
+    */
 #else /* LEETCODE15_01 */
-    
+    vector<vector<int>> threeSum(vector<int>& nums) {
+        int iNumsLen = nums.size(), iL = 0, iR = 0, iThreeSum = 0;
+        sort(nums.begin(), nums.end());
+        vector<vector<int>> vRet;
+
+        for(int i = 0; i < iNumsLen; i++)
+        {
+            if (i > 0)
+            {
+                if (nums[i] == nums[i-1])
+                {
+                    continue;
+                }
+            }
+
+            iL = i+1;
+            iR = iNumsLen - 1;
+
+            while(iL < iR)
+            {
+                iThreeSum = nums[i] + nums[iL] + nums[iR];
+
+                if (iThreeSum > 0)
+                {
+                    iR--;
+                }
+                else if (iThreeSum < 0)
+                {
+                    iL++;
+                }
+                else // if (iThreeSum == 0)
+                {
+                    vRet.push_back({nums[i], nums[iL], nums[iR]});
+                    iL++;
+
+                    while ((nums[iL] == nums[iL - 1]) && (iL < iR))
+                    {
+                        iL++;
+                    }
+                }
+            }
+        }
+        return vRet;
+    }
 #endif /* LEETCODE15_01 */
 };
 
