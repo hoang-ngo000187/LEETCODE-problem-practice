@@ -1058,6 +1058,48 @@ public:
         return sLongestPalSubStr;
     }
     
+    /* 139. Word Break */
+    bool wordBreak(string s, vector<string>& wordDict) {
+        int iMaxWordLen = 0, iLenTemp = 0, iLenS = s.length();
+        string sTemp = "";
+        unordered_map<string, bool> um_checkWord;
+        vector<bool> vDp(iLenS + 1);
+
+        for(string sWord: wordDict)
+        {
+            iLenTemp = sWord.length();
+            if (iLenTemp > iMaxWordLen)
+            {
+                iMaxWordLen = iLenTemp;
+            }
+            um_checkWord[sWord] = true;
+        }
+
+        vDp[0] = true;
+
+        for (int i = 1; i < iLenS + 1; i++)
+        {
+            sTemp = "";
+            for (int j = 0; j < iMaxWordLen; j++)
+            {
+                if ((i - 1) - j >= 0)
+                {
+                    sTemp = s.substr((i-1) - j, j+1);
+    
+                    if (um_checkWord[sTemp] == true)
+                    {
+                        if (((i - j) - 1 < 0) || (vDp[(i - j) - 1] == true))
+                        {
+                            vDp[i] = true;
+                            break; // No need to check further prefixes
+                        }
+                    }
+                }
+            }
+        }
+
+        return vDp[iLenS];
+    }
 };
 
 
@@ -1071,8 +1113,9 @@ int main()
     vector<int> VECTOR_RESULT;
     vector<vector<char>> VECTOR_2D_RESULT;
     double DOUBLE_RESULT = 0;
-
-    STR_RESULT = S.longestPalindrome("xaabacxcabaaxcabaax");
+    
+    vector<string> a = {"leet","code"};
+    STR_RESULT = S.wordBreak("leetcode", a);
     //cout << VECTOR_RESULT;
     return 0;
 }
