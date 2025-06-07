@@ -1100,6 +1100,96 @@ public:
 
         return vDp[iLenS];
     }
+
+    /* 15. 3Sum */
+#define LEETCODE15_01
+
+#ifdef LEETCODE15_01
+    vector<vector<int>> threeSum(vector<int>& nums) {
+        unordered_map<int, int> um_NumCnt;
+        int iNumsLen = nums.size(), i = 0, j = iNumsLen - 1, iTemp = 0;
+        vector<vector<int>> v_Ret;
+        set<vector<int>> set_storage;
+
+        sort(nums.begin(), nums.end());
+
+        for(int x: nums)
+        {
+            um_NumCnt[x]++;
+        }
+
+        if ( ((nums[0] >= 0) && (nums[iNumsLen - 1] > 0)) ||\
+            ((nums[0] < 0) && (nums[iNumsLen - 1] <= 0)) )
+        {
+            v_Ret = {};
+        }
+        else if ((nums[0] == 0) && (nums[iNumsLen - 1] == 0))
+        {
+            v_Ret.push_back({0, 0, 0});
+        }
+        else
+        {
+            while(j > 0)
+            {
+                if (j < iNumsLen - 1)
+                {
+                    if (nums[j] == nums[j+1])
+                    {
+                        j--;
+                        continue; // avoid duplicate solution
+                    }
+                }
+
+                if (nums[j] >= 0)
+                {
+                    um_NumCnt[nums[j]]--;
+                    for(i = 0; i < j; i++)
+                    {
+                        if (i > 0)
+                        {
+                            if (nums[i] == nums[i-1])
+                            {
+                                continue; // avoid duplicate solution
+                            }
+                        }
+
+                        if (nums[i] <= 0)
+                        {
+                            um_NumCnt[nums[i]]--;
+                            iTemp = 0 - (nums[i] + nums[j]);
+                            if (um_NumCnt[iTemp] != 0)
+                            {
+                                vector<int> store = {nums[i], nums[j], iTemp};
+                                sort(store.begin(), store.end());
+
+                                set_storage.insert(store);
+                            }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                        um_NumCnt[nums[i]]++;
+                    }
+                    um_NumCnt[nums[j]]++;
+                    j--;
+                }  
+                else
+                {
+                    break;
+                }
+            }
+            
+            for(vector<int> x: set_storage)
+            {
+                v_Ret.push_back(x);
+            }
+        }
+        return v_Ret;
+    }
+#else /* LEETCODE15_01 */
+    
+#endif /* LEETCODE15_01 */
 };
 
 
@@ -1111,11 +1201,12 @@ int main()
     long long LL_RESULT = 0;
     bool BOOL_RESULT = false;
     vector<int> VECTOR_RESULT;
-    vector<vector<char>> VECTOR_2D_RESULT;
+    vector<vector<int>> VECTOR_2D_INT_RESULT;
+    vector<vector<char>> VECTOR_2D_CHAR_RESULT;
     double DOUBLE_RESULT = 0;
     
-    vector<string> a = {"leet","code"};
-    STR_RESULT = S.wordBreak("leetcode", a);
+    vector<int> a ={1,2,-2,-1};
+    VECTOR_2D_INT_RESULT = S.threeSum(a);
     //cout << VECTOR_RESULT;
     return 0;
 }
