@@ -1238,6 +1238,45 @@ public:
         return vRet;
     }
 #endif /* LEETCODE15_01 */
+
+
+    /* 152. Maximum Product Subarray */
+    int find_max(int a, int b, int c)
+    {
+        return (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);
+    }
+
+    int find_min(int a, int b, int c)
+    {
+        return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
+    }
+
+    int maxProduct(vector<int>& nums) {
+        int res = 0, tmp_max = 0;
+        pair<int, int> min_max_val = {1, 1}; /* first = min | second = max */
+        
+        res = *max_element(nums.begin(), nums.end());
+
+        for(int n: nums)
+        {
+            if (n == 0)
+            {
+                min_max_val.first = 1;
+                min_max_val.second = 1;
+                continue;
+            }
+
+            tmp_max = min_max_val.second;
+            min_max_val.second = find_max((n * min_max_val.second), (n * min_max_val.first), n);
+            min_max_val.first = find_min((n * tmp_max), (n * min_max_val.first), n);
+
+            if (min_max_val.second > res)
+            {
+                res = min_max_val.second;
+            }
+        }
+        return res;
+    }
 };
 
 
@@ -1253,8 +1292,8 @@ int main()
     vector<vector<char>> VECTOR_2D_CHAR_RESULT;
     double DOUBLE_RESULT = 0;
     
-    vector<int> a ={1,2,-2,-1};
-    VECTOR_2D_INT_RESULT = S.threeSum(a);
+    vector<int> a ={2,3,-2,4};
+    INT_RESULT = S.maxProduct(a);
     //cout << VECTOR_RESULT;
     return 0;
 }
