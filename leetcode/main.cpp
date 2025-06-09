@@ -1277,6 +1277,92 @@ public:
         }
         return res;
     }
+
+
+    int search(vector<int>& nums, int target) {
+        int iNumsLen = nums.size();
+        int iLeft = 0, iRight = 0, iMid = 0, iTargetIndex = -1;
+        int iPivot = 0;
+
+        if (iNumsLen == 1)
+        {
+            if (nums[0] == target)
+            {
+                return 0;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+        else if (iNumsLen == 0)
+        {
+            return -1;
+        }
+        else
+        {
+            for(int i = 1; i < iNumsLen; i++)
+            {
+                if (nums[i] < nums[i-1])
+                {
+                    iPivot = i;
+                    break;
+                }
+            }
+
+            if (target == nums[0])
+            {
+                return 0;
+            }
+            else if (target == nums[iPivot])
+            {
+                return iPivot;
+            }
+            else if ((iPivot > 1) && (target == nums[iPivot - 1]))
+            {
+                return iPivot - 1;
+            }
+            else
+            {
+                if (iPivot == 0)
+                {
+                    iLeft = 0;
+                    iRight = iNumsLen - 1;
+                }
+                else if (target > nums[0] && target < nums[iPivot - 1])
+                {
+                    iLeft = 0;
+                    iRight = iPivot - 1;
+                }
+                else
+                {
+                    iLeft = iPivot;
+                    iRight = iNumsLen - 1;
+                }
+
+                while(iLeft <= iRight)
+                {
+                    iMid = (iLeft + iRight)/2;
+
+                    if (nums[iMid] < target)
+                    {
+                        iLeft = iMid+1;
+                    }
+                    else if (nums[iMid] > target)
+                    {
+                        iRight = iMid-1;
+                    }
+                    else
+                    {
+                        iTargetIndex = iMid;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return iTargetIndex;
+    }
 };
 
 
@@ -1292,8 +1378,8 @@ int main()
     vector<vector<char>> VECTOR_2D_CHAR_RESULT;
     double DOUBLE_RESULT = 0;
     
-    vector<int> a ={2,3,-2,4};
-    INT_RESULT = S.maxProduct(a);
+    vector<int> a ={4,5,6,7,0,1,2};
+    INT_RESULT = S.search(a, 1);
     //cout << VECTOR_RESULT;
     return 0;
 }
