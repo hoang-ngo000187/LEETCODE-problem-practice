@@ -7,6 +7,7 @@
 #include <string>
 #include<bits/stdc++.h>
 #include<stdint.h>
+#include<cmath>
 using namespace std;
 
 class Solution {
@@ -1279,7 +1280,12 @@ public:
     }
 
 
-    int search(vector<int>& nums, int target) {
+    /* 33. Search in Rotated Sorted Array */
+#undef LEETCODE33_01
+
+    int search(vector<int>& nums, int target) 
+    {
+#ifdef LEETCODE33_01
         int iNumsLen = nums.size();
         int iLeft = 0, iRight = 0, iMid = 0, iTargetIndex = -1;
         int iPivot = 0;
@@ -1362,7 +1368,155 @@ public:
         }
 
         return iTargetIndex;
+#else
+        /* Solution 02 */
+        return 0;
+#endif
     }
+
+
+    /* 424. Longest Repeating Character Replacement */
+    int characterReplacement(string s, int k) 
+    {
+        int iAlphabetFreq[26] = {0};
+        int iLeft = 0, iRight = 0;
+        int iWindowSize = 0, iLongestRepeatLen = 0;
+        int iMaxFreq = 0;
+        int iCharNeedToBeChanged = 0;
+
+        for(iRight = 0; iRight < s.length(); iRight++)
+        {
+            iAlphabetFreq[s[iRight] - 'A']++;
+
+            /*
+                . Basicly, we need to check 26 characters to find the max_freq
+                . But, with the current max_freq and the window_size, we find the max_window_size = X.
+                    So, when iCharNeedToBeChanged > K, we decrease window size.
+                    After that, we continue with new Right, and increase window size, until max_freq is increased when checking new character form the right of S,
+                    we have iCharNeedToBeChanged (= iWindowSize - iMaxFreq) is decrease --> So until now, we can check the new longest window size.
+                    
+                    --> We don't need to check check 26 characters to find the max_freq every times when checking new character form the right of S,
+                    we just need to check with the new character form the right of S, iMaxFreq is increase or not (is bigger than current iMaxFreq?), 
+                    if not, we keep the previous iMaxFreq, because with decreased value of iMaxFreq, it makes no sense.
+            */
+            iMaxFreq = max(iMaxFreq, iAlphabetFreq[s[iRight] - 'A']);
+
+            iWindowSize = iRight - iLeft + 1;
+
+            iCharNeedToBeChanged = iWindowSize - iMaxFreq;
+
+            if (iCharNeedToBeChanged > k)
+            {
+                // decrease window size by removing element of window on the left
+                iAlphabetFreq[s[iLeft] - 'A']--;
+                iLeft++;
+            }
+            
+            iWindowSize = iRight - iLeft + 1;
+            iLongestRepeatLen = max(iLongestRepeatLen, iWindowSize);
+        }
+        return iLongestRepeatLen;
+    }
+
+    int minMaxDifference(int num) {
+        string str_num = to_string(num);
+        string str_max = str_num, str_min = str_num;
+        bool big = false, small = false;
+        char bigchar = 0, smallchar = 0;
+        int bigval = 0, smallval = 0;
+        int L = str_num.length();
+
+        for(int i = 0; i < L; i++)
+        {
+            int x = str_num[i] - '0';
+            /*find max*/
+            if ((big == false) && ((str_num[i] - '0') < 9))
+            {
+                str_max[i] = '9';
+                big = true;
+                bigchar = (str_num[i]);
+            }
+
+            if ((small == false) && ((str_num[i] - '0') > 0))
+            {
+                str_min[i] = '0';
+                small = true;
+                smallchar = (str_num[i]);
+            }
+
+            if (big == true)
+            {
+                if (str_num[i] == bigchar)
+                {
+                    str_max[i] = '9';
+                }
+            }
+
+            if (small == true)
+            {
+                if (str_num[i] == smallchar)
+                {
+                    str_min[i] = '0';
+                }
+            }
+        }
+
+        int k = 1;
+        for(int j = L - 1; j >= 0; j--)
+        {
+            bigval += (str_max[j] - '0')*k;
+            smallval += (str_min[j] - '0')*k;
+
+            k = k*10;
+        }
+
+        return (bigval - smallval);
+    }
+
+    /* 198. House Robber */
+    int rob(vector<int>& nums) {
+        int L = nums.size();
+        int iDp[100] = {0};
+
+        if (L == 0)
+        {
+            return 0;
+        }
+        else if (L == 1)
+        {
+            return nums[0];
+        }
+        else
+        {
+            iDp[0] = nums[0];
+
+            if (nums[0] > nums[1])
+            {
+                iDp[1] = nums[0];
+            }
+            else
+            {
+                iDp[1] = nums[1];
+            }
+            
+            for(int i = 2; i < L; i++)
+            {
+                if (nums[i] + iDp[i-2] > iDp[i-1])
+                {
+                    iDp[i] = nums[i] + iDp[i-2];
+                }
+                else
+                {
+                    iDp[i] = iDp[i-1];
+                }
+            }
+
+            return iDp[L-1];
+        }
+
+        return 0;
+    }
+
 };
 
 
@@ -1378,8 +1532,8 @@ int main()
     vector<vector<char>> VECTOR_2D_CHAR_RESULT;
     double DOUBLE_RESULT = 0;
     
-    vector<int> a ={4,5,6,7,0,1,2};
-    INT_RESULT = S.search(a, 1);
-    //cout << VECTOR_RESULT;
+    vector<int> a = {2,1,1,2};
+    INT_RESULT = S.rob(a);
+    cout << INT_RESULT;
     return 0;
 }
