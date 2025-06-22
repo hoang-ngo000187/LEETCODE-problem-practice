@@ -1521,7 +1521,9 @@ public:
     int lengthOfLIS(vector<int>& nums) {
         int iLen = nums.size();
         int iMaxLen = 1;
+        int iIdxMax = 0;
         vector<int> vDp(iLen, 1);
+        vector<int> vMarkPositionSubStr(iLen, -1);
 
         int i = 0, j = 1;
 
@@ -1532,6 +1534,7 @@ public:
                 if (vDp[i] + 1 > vDp[j])
                 {
                     vDp[j] = vDp[i] + 1;
+                    vMarkPositionSubStr[j] = i;
                 }
                 else
                 {
@@ -1544,6 +1547,7 @@ public:
             if (vDp[j] > iMaxLen)
             {
                 iMaxLen = vDp[j];
+                iIdxMax = j;
             }
 
             if (i == j)
@@ -1552,6 +1556,26 @@ public:
                 i = 0;
             }
         }
+        
+        vector<int> LIS(iMaxLen, 0);
+        /* Find Longest Increasing Subsequence */
+        int k = iIdxMax, l = iMaxLen - 1;
+
+        while((k != -1) && (l >= 0))
+        {
+            LIS[l] = nums[k];
+            k = vMarkPositionSubStr[k];
+            l--;
+        }
+        
+        cout << "Max Len: " << iMaxLen << endl;
+
+        /* print */
+        for(int x: LIS)
+        {
+            cout << x << " ";
+        }
+        cout << endl;
 
         return iMaxLen;
     }
@@ -1570,7 +1594,7 @@ int main()
     vector<vector<char>> VECTOR_2D_CHAR_RESULT;
     double DOUBLE_RESULT = 0;
     
-    vector<int> a = {3, 4, -1, 0, 6, 2, 3};
+    vector<int> a = {7,7,7,7,7,7,7};
     INT_RESULT = S.lengthOfLIS(a);
     cout << INT_RESULT;
     return 0;
