@@ -1517,6 +1517,44 @@ public:
         return 0;
     }
 
+    /* 300. Longest Increasing Subsequence */
+    int lengthOfLIS(vector<int>& nums) {
+        int iLen = nums.size();
+        int iMaxLen = 1;
+        vector<int> vDp(iLen, 1);
+
+        int i = 0, j = 1;
+
+        while (j < iLen)
+        {
+            if (nums[j] > nums[i])
+            {
+                if (vDp[i] + 1 > vDp[j])
+                {
+                    vDp[j] = vDp[i] + 1;
+                }
+                else
+                {
+                    ; // keep the maxvalue of vDp[j]
+                }
+            }
+            
+            i++;
+
+            if (vDp[j] > iMaxLen)
+            {
+                iMaxLen = vDp[j];
+            }
+
+            if (i == j)
+            {
+                j++;
+                i = 0;
+            }
+        }
+
+        return iMaxLen;
+    }
 };
 
 
@@ -1532,8 +1570,8 @@ int main()
     vector<vector<char>> VECTOR_2D_CHAR_RESULT;
     double DOUBLE_RESULT = 0;
     
-    vector<int> a = {2,1,1,2};
-    INT_RESULT = S.rob(a);
+    vector<int> a = {3, 4, -1, 0, 6, 2, 3};
+    INT_RESULT = S.lengthOfLIS(a);
     cout << INT_RESULT;
     return 0;
 }
