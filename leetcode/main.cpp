@@ -1579,8 +1579,113 @@ public:
 
         return iMaxLen;
     }
-};
 
+    /* 224. Basic Calculator */
+
+#define SPACE   ' '
+#define PLUS_SIGN   '+'
+#define SUBSTRACT_SIGN  '-'
+#define OPEN_CRACKET    '('
+#define CLOSE_CRACKET   ')'
+#define CHAR_0  '0'
+#define CHAR_9  '9'
+    enum
+    {
+        PLUS = 1,
+        SUBSTRACT = -1,
+    };
+
+    typedef struct _OPERATION
+    {
+        int iValue;
+        int iSign;
+    }OPERATION;
+
+    int String_To_Int(string str)
+    {
+        int iLen = str.length();
+        int iRes = 0;
+
+        for(int i = 0; i < iLen; i++)
+        {
+            if (iRes * 10 + (str[i] - '0') > INT_MAX)
+            {
+                iRes = INT_MAX;
+            }
+            else
+            {
+                iRes = iRes * 10 + (str[i] - '0');
+            }
+        }
+
+        return iRes;
+    }
+    
+    int calculate(string s) 
+    {
+        stack<OPERATION> stackBeforeOperation;
+        OPERATION Op_CurrOperation, Op_BeforeOperation;
+        int iCurrNum = 0;
+        int iIdx = 0;
+        int iLen = s.length();
+        string strTmp = "";
+
+        Op_CurrOperation.iSign = PLUS;
+        Op_CurrOperation.iValue = 0;
+
+        while(iIdx < iLen)
+        {
+            if (s[iIdx] != SPACE)
+            {
+                if (s[iIdx] >= CHAR_0 && s[iIdx] <= CHAR_9)
+                {
+                    strTmp = "";
+                    while(s[iIdx] >= CHAR_0 && s[iIdx] <= CHAR_9)
+                    {
+                        strTmp += s[iIdx];
+                        iIdx++;
+                    }
+                    iCurrNum = String_To_Int(strTmp);
+                    Op_CurrOperation.iValue += ((Op_CurrOperation.iSign) * (iCurrNum));
+                }
+                else if (s[iIdx] == PLUS_SIGN)
+                {
+                    Op_CurrOperation.iSign = PLUS;
+                    iIdx++;
+                }
+                else if (s[iIdx] == SUBSTRACT_SIGN)
+                {
+                    Op_CurrOperation.iSign = SUBSTRACT;
+                    iIdx++;
+                }
+                else if (s[iIdx] == OPEN_CRACKET)
+                {
+                    /* Save before value and sign into stack */
+                    stackBeforeOperation.push(Op_CurrOperation);
+                    /* Initialize value to 0 and sign to PLUS */
+                    Op_CurrOperation.iSign = PLUS;
+                    Op_CurrOperation.iValue = 0;
+                    iIdx++;
+                }
+                else if (s[iIdx] == CLOSE_CRACKET)
+                {
+                    Op_BeforeOperation = stackBeforeOperation.top();
+                    stackBeforeOperation.pop();
+
+                    Op_CurrOperation.iValue = Op_BeforeOperation.iValue + ((Op_BeforeOperation.iSign) * (Op_CurrOperation.iValue));
+
+                    iIdx++;
+                }
+            }
+            else
+            {
+                iIdx++;
+            }
+        }
+
+        return Op_CurrOperation.iValue;
+    }
+};
 
 int main()
 {
@@ -1595,7 +1700,7 @@ int main()
     double DOUBLE_RESULT = 0;
     
     vector<int> a = {7,7,7,7,7,7,7};
-    INT_RESULT = S.lengthOfLIS(a);
+    INT_RESULT = S.calculate("2147483647");
     cout << INT_RESULT;
     return 0;
 }
