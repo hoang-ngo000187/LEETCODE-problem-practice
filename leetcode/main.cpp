@@ -1685,6 +1685,60 @@ public:
 
         return Op_CurrOperation.iValue;
     }
+
+
+    /* 435. Non-overlapping Intervals */
+    int eraseOverlapIntervals(vector<vector<int>>& intervals) {
+        int iMinval = 0, iMaxVal = 0;
+        int iCnt = 0, iLen = intervals.size();
+
+        sort(intervals.begin(), intervals.end());
+
+        iMinval = intervals[0][0];
+        iMaxVal = intervals[0][1];
+
+        for(int i = 1; i < iLen; i++)
+        {
+
+            if (intervals[i][0] >= iMinval && intervals[i][0] < iMaxVal)
+            {
+                iCnt++;
+            }
+            else
+            {
+                iMaxVal = intervals[i][1];
+            }
+        }
+
+        return iCnt;
+    }
+
+    /* 231. Power of Two */
+#if 0
+    /* Using Recursion */
+    bool isPowerOfTwo(int n) {
+        
+        if ((n%2 != 0 && n!= 1) || (n == 0))
+            return false;
+        
+        if ((n/2 == 1) || (n == 1))
+            return true;
+        
+        return isPowerOfTwo(n/2);
+    }
+#else
+    bool isPowerOfTwo(int n) {
+        if (n==0)
+            return false;
+        
+        // Note: the == operator has a higher priority than the & operator, so the () sign is required.
+        if ((n & -n) == n) 
+            return true;
+        
+        return false;
+    }
+#endif
+
 };
 
 int main()
@@ -1699,8 +1753,8 @@ int main()
     vector<vector<char>> VECTOR_2D_CHAR_RESULT;
     double DOUBLE_RESULT = 0;
     
-    vector<int> a = {7,7,7,7,7,7,7};
-    INT_RESULT = S.calculate("2147483647");
-    cout << INT_RESULT;
+    int n = 16;
+    BOOL_RESULT = S.isPowerOfTwo(n);
+    cout << BOOL_RESULT;
     return 0;
 }
