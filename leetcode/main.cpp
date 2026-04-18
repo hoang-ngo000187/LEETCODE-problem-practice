@@ -8,6 +8,7 @@
 #include<bits/stdc++.h>
 #include<stdint.h>
 #include<cmath>
+#include <utility> // using for pair
 using namespace std;
 
 class Solution {
@@ -1738,6 +1739,25 @@ public:
         return false;
     }
 #endif
+
+    /* 804. Unique Morse Code Words */
+    int uniqueMorseRepresentations(vector<string>& words) {
+        string lookup_table[26] = {".-","-...","-.-.","-..",".","..-.","--.","....","..",".---","-.-",".-..","--","-.","---",".--.","--.-",".-.","...","-","..-","...-",".--","-..-","-.--","--.."};
+        set<string> uniqe_store;
+        string tmp = "";
+
+        for(string str : words)
+        {
+            tmp = "";
+            for(int j = 0; j < str.length(); j++)
+            {
+                tmp += lookup_table[str[j] - 'a'];
+            }
+            uniqe_store.insert(tmp);
+        }
+
+        return uniqe_store.size();
+    }
 
 };
 
