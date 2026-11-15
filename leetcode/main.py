@@ -46,8 +46,66 @@ class Solution:
             i += 1
         return res
 
+    # 743. Network Delay Time
+    def networkDelayTime(self, times: list[list[int]], n: int, k: int) -> int:
+        ret = -1
+        # [[2,1,1],[2,3,1],[3,4,1]]
+        INFTY = float('inf')
+        # graph = {}
+        # for i in range(1, n+1):
+        #     graph[i] = []
+        #     for t in times:
+        #         if t[0] == i:
+        #             graph[i].append([t[1], t[2]])
+        graph = {i:[] for i in range(1, n+1)}
+
+        for u, v, w in times:
+            graph[u].append([v, w])
+
+        print(graph)
+
+        dist = {node: INFTY for node in graph}
+        dist[k] = 0
+        prev = {node: None for node in graph}
+        S = set()
+
+        while len(S) < n:
+            # 2. Tim dinh u nam ngoai tap S co dist[u] nho nhat
+            min_dist = INFTY
+            u = None
+            for node in graph:
+                if node not in S and dist[node] < min_dist:
+                    min_dist = dist[node]
+                    u = node
+
+            if u is None or dist[u] == INFTY:
+                break
+
+            S.add(u)
+
+            # 3. Thu gian cac dinh ke v chua nam trong S
+            for v, w in graph[u]:
+                if v not in S:
+                    new_dist = dist[u] + w
+                    if new_dist < dist[v]:
+                        dist[v] = new_dist
+                        prev[v] = u
+
+        ret = dist[k]
+        for i in range(1, n+1):
+            if dist[i] == INFTY:
+                ret = -1
+                break
+            else:
+                if dist[i] > ret:
+                    ret = dist[i]
+        return ret
+
+
 if __name__ == '__main__':
     sol = Solution()
-    nums = [3,2,2,3]
-    val = 3
-    print(sol.removeElement(nums, val))
+    #times = [[2,1,1],[2,3,1],[3,4,1]]
+    times = [[1,2,1]]
+    n = 2
+    k = 2
+    print(sol.networkDelayTime(times, n, k))
