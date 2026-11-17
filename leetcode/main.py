@@ -49,20 +49,11 @@ class Solution:
     # 743. Network Delay Time
     def networkDelayTime(self, times: list[list[int]], n: int, k: int) -> int:
         ret = -1
-        # [[2,1,1],[2,3,1],[3,4,1]]
         INFTY = float('inf')
-        # graph = {}
-        # for i in range(1, n+1):
-        #     graph[i] = []
-        #     for t in times:
-        #         if t[0] == i:
-        #             graph[i].append([t[1], t[2]])
         graph = {i:[] for i in range(1, n+1)}
 
         for u, v, w in times:
             graph[u].append([v, w])
-
-        print(graph)
 
         dist = {node: INFTY for node in graph}
         dist[k] = 0
@@ -101,11 +92,47 @@ class Solution:
                     ret = dist[i]
         return ret
 
+    # 787. Cheapest Flights Within K Stops
+    def findCheapestPrice(self, n: int, flights: list[list[int]], src: int, dst: int, k: int) -> int:
+        INFTY = float('inf')
+        graph = {i: [] for i in range (0, n)}
+        for u, v, w in flights:
+            graph[u].append([v, w])
+
+        dist = {city: INFTY for city in graph}
+        dist[src] = 0
+        prev = {city: None for city in graph}
+
+        # Chạy đúng k + 1 vòng lặp (tương ứng tối đa k + 1 chặng bay = k điểm dừng)
+        for i in range(k+1):
+            update = False
+            # Tạo bản sao để không bị cập nhật dây chuyền trong cùng 1 lượt lặp
+            temp_dist = dist.copy()
+
+            # Duyet qua tat ca cac canh (u->v) tu graph
+            for u in graph:
+                if dist[u] == INFTY:
+                    continue
+                for v, w in graph[u]:
+                    # Đọc chi phí từ dist (bước trước), cập nhật vào temp_dist (bước hiện tại)
+                    if dist[u] + w < temp_dist[v]:
+                        temp_dist[v] = dist[u] + w
+                        prev[v] = u
+                        update = True
+
+            dist = temp_dist
+            if not update:
+                break
+            
+        return dist[dst] if dist[dst] != INFTY else -1
+
+
 
 if __name__ == '__main__':
     sol = Solution()
-    #times = [[2,1,1],[2,3,1],[3,4,1]]
-    times = [[1,2,1]]
-    n = 2
-    k = 2
-    print(sol.networkDelayTime(times, n, k))
+    n = 4
+    flights = [[0,1,1],[0,2,5],[1,2,1],[2,3,1]]
+    src = 0
+    dst = 3
+    k = 1
+    print(sol.findCheapestPrice(n, flights, src, dst, k))
