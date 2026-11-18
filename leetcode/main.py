@@ -126,13 +126,55 @@ class Solution:
             
         return dist[dst] if dist[dst] != INFTY else -1
 
+    # 1334. Find the City With the Smallest Number of Neighbors at a Threshold Distance
+    def findTheCity(self, n: int, edges: list[list[int]], distanceThreshold: int) -> int:
+        INFTY = float('inf')
+        graph = {i: [] for i in range(n)} # 0 --> n - 1 cities
+        for u, v, w in edges:
+            graph[u].append([v, w])
+            graph[v].append([u, w]) # ma tran 2 chieu
+        
+        dist = [[INFTY]*n for _ in range(n)]
 
+        # Khoi tao duong cheo chinh
+        for i in range(n):
+            dist[i][i] = 0
+
+        # Khoi tao cac canh
+        for u in graph:
+            for v, w in graph[u]:
+                dist[u][v] = w
+
+        # Floyd-Warshall
+        for k in range(n):
+            for i in range(n):
+                if dist[i][k] == INFTY:
+                    continue
+                for j in range(n):
+                    if dist[k][j] == INFTY:
+                        continue
+
+                    new_dist_ij = dist[i][k] + dist[k][j]
+                    if new_dist_ij < dist[i][j]:
+                        dist[i][j] = new_dist_ij
+        print(dist)
+
+        min_cnt = INFTY
+        for i, row in enumerate(dist):
+            cnt = 0
+            for r in row:
+                if r <= distanceThreshold:
+                    cnt += 1
+            cnt -= 1
+            if cnt <= min_cnt:
+                min_cnt = cnt
+                ret = i
+
+        return ret
 
 if __name__ == '__main__':
     sol = Solution()
     n = 4
-    flights = [[0,1,1],[0,2,5],[1,2,1],[2,3,1]]
-    src = 0
-    dst = 3
-    k = 1
-    print(sol.findCheapestPrice(n, flights, src, dst, k))
+    edges = [[0,1,3],[1,2,1],[1,3,4],[2,3,1]]
+    distanceThreshold = 4
+    print(sol.findTheCity(n, edges, distanceThreshold))
